@@ -120,9 +120,13 @@ class TextEmbeddedBox extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     int thisMonthSummary = ref.watch(monthlySummaryProvider)[title]!;
+
+    //Summary Text Properties
     String prefix = thisMonthSummary > 0 ? 'income' : 'expense';
+    MaterialColor summaryTextColor = thisMonthSummary > 0 ? Colors.green : Colors.red;
 
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Stack(
           children: [
@@ -161,9 +165,21 @@ class TextEmbeddedBox extends ConsumerWidget {
                 )),
           ],
         ),
-        //TODO: SUMMARY IN MONTHLY WIDGET (improve)
-        Text(currencyFormat(thisMonthSummary.toString(), prefix: prefix)),
-        const Divider(thickness: 3,)
+        Container(
+          margin: const EdgeInsets.fromLTRB(9, 1, 9, 1),
+          padding: const EdgeInsets.all(9),
+          decoration: BoxDecoration(
+            border: Border.all(color: Theme.of(context).primaryColor)
+          ),
+          child: Text(
+            currencyFormat(thisMonthSummary.toString(), prefix: prefix),
+            style: TextStyle(color: summaryTextColor),
+          ),
+        ),
+        const Padding(
+          padding: EdgeInsets.fromLTRB(9, 1, 9, 1),
+          child: Divider(thickness: 2,),
+        )
       ],
     );
   }
