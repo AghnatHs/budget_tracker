@@ -3,6 +3,9 @@ import 'package:fl_budget_tracker/providers/database_providers.dart';
 import 'package:fl_budget_tracker/providers/input_providers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+import '../functions.dart';
+
 const TextStyle inputTitleTextStyle = TextStyle(
   fontSize: 18,
   fontWeight: FontWeight.bold,
@@ -49,7 +52,9 @@ class InputDialogState extends ConsumerState<InputDialog> {
                 hintText: 'format: 100000 (Rp10.000)',
                 labelText: 'Amount',
               ),
-              onChanged: (String? value) {setState(() {});},
+              onChanged: (String? value) {
+                setState(() {});
+              },
               validator: (String? value) {
                 return int.tryParse(value!) != null ? null : 'Please enter valid integer';
               },
@@ -103,4 +108,93 @@ class InputDialogState extends ConsumerState<InputDialog> {
   }
 }
 
-//TODO: MAKE CONFIRM DIALOG IN DELETING BUDGET TILE
+//'DELETING BUDGET TILE' WIDGET
+class BudgetTileMockup extends ConsumerWidget {
+  final String amount;
+  final String budgetType;
+  final String detail;
+  final String date;
+  const BudgetTileMockup(
+      {required this.amount,
+      required this.budgetType,
+      required this.detail,
+      required this.date,
+      Key? key})
+      : super(key: key);
+
+  @override
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    Color textColor = budgetType == 'income' ? Colors.green : Colors.red;
+    return ListTile(
+      tileColor: Colors.black12,
+      contentPadding: const EdgeInsets.symmetric(horizontal: 5),
+      title: Text(
+        currencyFormat(amount, prefix: budgetType),
+        style: TextStyle(color: textColor),
+      ),
+      subtitle: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        Text(detail),
+        Text(
+          date,
+          style: const TextStyle(fontStyle: FontStyle.italic),
+        )
+      ]),
+    );
+  }
+}
+
+class BudgetTileConfirmDeleteDialog extends ConsumerWidget {
+  //SHOW SNACKBAR AFTER DELETING
+  final String token;
+  final String amount;
+  final String budgetType;
+  final String detail;
+  final String date;
+  const BudgetTileConfirmDeleteDialog(
+      {required this.token,
+      required this.amount,
+      required this.budgetType,
+      required this.detail,
+      required this.date,
+      Key? key})
+      : super(key: key);
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    return AlertDialog(
+      title: const Text('Delete this budget?', style: inputTitleTextStyle),
+      titlePadding: const EdgeInsets.fromLTRB(12, 12, 0, 12),
+      contentPadding: const EdgeInsets.all(2),
+      content: Padding(
+          padding: const EdgeInsets.fromLTRB(12, 5, 12, 0),
+          child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                BudgetTileMockup(
+                    amount: amount, budgetType: budgetType, detail: detail, date: date),
+                const SizedBox(
+                  height: 8,
+                ),
+                const Text('This action cannot be undone!'),
+                const Divider(),
+              ])),
+      actions: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+            TextButton(onPressed: () => Navigator.pop(context), child: const Text('CANCEL')),
+            TextButton(
+                onPressed: () {
+                  ref.read(budgetHistoryDataProvider.notifier).removeBudget(token);
+                  saveDbJson(data: ref.watch(budgetHistoryDataProvider));
+                  Navigator.pop(context);
+                },
+                child: const Text('ACCEPT'))
+          ],
+        )
+      ],
+    );
+  }
+}

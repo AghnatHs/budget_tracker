@@ -8,8 +8,9 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:intl/intl.dart';
 
 import '../functions.dart';
-import '../database/database.dart';
 import '../providers/database_providers.dart';
+
+import 'input_dialog_widgets.dart';
 
 //TEXT STYLE
 const TextStyle normalBudgetTextStyle = TextStyle(
@@ -98,12 +99,11 @@ class BudgetHistoryListTile extends ConsumerWidget {
       ]),
       trailing: IconButton(
         icon: const Icon(Icons.delete_forever),
-        onPressed: () {
-          //Delete this budget
-          ref.read(budgetHistoryDataProvider.notifier).removeBudget(token);
-          saveDbJson(data: ref.watch(budgetHistoryDataProvider));
-          // set dayInfoDay to '' if there are not any other budget in this day
-        },
+        onPressed: () => showDialog( 
+          barrierColor: Colors.black87,
+          context: context,
+          builder: (BuildContext context) => BudgetTileConfirmDeleteDialog(token: token, amount: budget, budgetType: budgetType ,detail:detail, date:date),
+        )
       ),
       isThreeLine: false,
     );
