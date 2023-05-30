@@ -67,7 +67,6 @@ class BudgetInfoCard extends ConsumerWidget {
 }
 
 class BudgetHistoryListTile extends ConsumerWidget {
-  //TODO: MAKE CONFIRM DIALOG IN DELETING BUDGET TILE
   final String token;
   final String budget;
   final String budgetType;
@@ -98,13 +97,19 @@ class BudgetHistoryListTile extends ConsumerWidget {
         )
       ]),
       trailing: IconButton(
-        icon: const Icon(Icons.delete_forever),
-        onPressed: () => showDialog( 
-          barrierColor: Colors.black87,
-          context: context,
-          builder: (BuildContext context) => BudgetTileConfirmDeleteDialog(token: token, amount: budget, budgetType: budgetType ,detail:detail, date:date),
-        )
-      ),
+          icon: const Icon(Icons.delete_forever),
+          onPressed: () {
+            showDialog(
+              barrierColor: Colors.black87,
+              context: context,
+              builder: (BuildContext context) => BudgetTileConfirmDeleteDialog(
+                  token: token,
+                  amount: budget,
+                  budgetType: budgetType,
+                  detail: detail,
+                  date: date),
+            );
+          }),
       isThreeLine: false,
     );
   }

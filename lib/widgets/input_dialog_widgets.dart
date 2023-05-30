@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../functions.dart';
+import 'snackbar.dart';
 
 const TextStyle inputTitleTextStyle = TextStyle(
   fontSize: 18,
@@ -145,7 +146,6 @@ class BudgetTileMockup extends ConsumerWidget {
 }
 
 class BudgetTileConfirmDeleteDialog extends ConsumerWidget {
-  //TODO: SHOW SNACKBAR AFTER DELETING
   final String token;
   final String amount;
   final String budgetType;
@@ -190,6 +190,7 @@ class BudgetTileConfirmDeleteDialog extends ConsumerWidget {
                   ref.read(budgetHistoryDataProvider.notifier).removeBudget(token);
                   saveDbJson(data: ref.watch(budgetHistoryDataProvider));
                   Navigator.pop(context);
+                  ScaffoldMessenger.of(context).showSnackBar(createSnackbar('Budget deleted'));
                 },
                 child: const Text('ACCEPT'))
           ],
