@@ -20,50 +20,57 @@ final dailyDayDataProvider = StateNotifierProvider.autoDispose<DailyDayDataNotif
 
   return dailyDayDataProvider;
 });
-//provide list of BudgetHistoryData in given day
-final dailyBudgetHistoryByGivenDayProvider = StateNotifierProvider.autoDispose<
-    BudgetHistoryByGivenDayNotifier, List<BudgetHistoryData>>((ref) {
+
+//Return map contains income, expense and summary each day
+final dailyDayReportProvider =
+    StateNotifierProvider.autoDispose<DailyDayReportNotifier, Map<String, Map<String, int>>>(
+        (ref) {
   final dailyDayData = ref.watch(dailyDayDataProvider);
-  final day = ref.watch(dayInfoDayProvider);
-  final budgetHistory = BudgetHistoryByGivenDayNotifier();
-  budgetHistory.overwriteState(dailyDayData[day] ?? []);
+  final dailyDayReport = DailyDayReportNotifier();
 
-  return budgetHistory;
-});
-//provide day user selected
-final dayInfoDayProvider = StateProvider<String>((ref) => '');
-//provide income, expense, and summary from this day budgets
-final dailyIncomeProvider = StateProvider.autoDispose<int>((ref) {
-  int sum = 0;
-  final dailyBudgetHistoryData = ref.watch(dailyBudgetHistoryByGivenDayProvider);
-  for (var budget in dailyBudgetHistoryData) {
-    budget.type == 'income' ? sum += int.parse(budget.amount) : null;
+  final Map<String, Map<String, int>> data = {};
+  for (String day in dailyDayData.keys) {
+    //each day
+    int income = 0;
+    int expense = 0;
+    for (var budget in dailyDayData[day]!) {
+      switch (budget.type) {
+        case 'income':
+          income += int.parse(budget.amount);
+          break;
+        case 'expense':
+          expense += int.parse(budget.amount);
+          break;
+        default:
+          income += 0;
+      }
+    }
+    int summary = income - expense;
+    data.update(day, (value) => {'income': income, 'expense': expense, 'summary': summary},
+        ifAbsent: () => {'income': income, 'expense': expense, 'summary': summary});
   }
-  return sum;
+  dailyDayReport.overwriteState(data);
+  return dailyDayReport;
 });
-final dailyExpenseProvider = StateProvider.autoDispose<int>((ref) {
-  int sum = 0;
-  final dailyBudgetHistoryData = ref.watch(dailyBudgetHistoryByGivenDayProvider);
-  for (var budget in dailyBudgetHistoryData) {
-    budget.type == 'expense' ? sum += int.parse(budget.amount) : null;
-  }
-  return sum;
-});
-final dailySummaryProvider = StateProvider.autoDispose<int>(
-    (ref) => ref.watch(dailyIncomeProvider) - ref.watch(dailyExpenseProvider));
-
-class BudgetHistoryByGivenDayNotifier extends StateNotifier<List<BudgetHistoryData>> {
-  BudgetHistoryByGivenDayNotifier() : super([]);
-
-  void overwriteState(List<BudgetHistoryData> newData) {
-    state = newData;
-  }
-}
 
 class DailyDayDataNotifier extends StateNotifier<Map<String, List<BudgetHistoryData>>> {
   DailyDayDataNotifier() : super({});
 
   void overwriteState(Map<String, List<BudgetHistoryData>> newData) {
+    state = newData;
+  }
+}
+
+class DailyDayReportNotifier extends StateNotifier<Map<String, Map<String, int>>> {
+  /* 
+  ex. 
+  {
+    '1 june 1945' : {'income' : 2500, 'expense' : 1500 }
+  }
+  */
+  DailyDayReportNotifier() : super({});
+
+  void overwriteState(Map<String, Map<String, int>> newData) {
     state = newData;
   }
 }

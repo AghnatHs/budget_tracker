@@ -6,105 +6,100 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 
-
 //SMALL WIDGETS
 class DayInfoDisplay extends ConsumerWidget {
-  static const TextStyle titleStyle = TextStyle(fontWeight: FontWeight.bold);
-  const DayInfoDisplay({Key? key}) : super(key: key);
+  const DayInfoDisplay({required this.day, Key? key}) : super(key: key);
+  final String day;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    String day = ref.watch(dayInfoDayProvider);
-    List<BudgetHistoryData> budgetHistory = ref.watch(dailyBudgetHistoryByGivenDayProvider);
+    //String day = ref.watch(dayInfoDayProvider);
+    List<BudgetHistoryData> budgetHistory = ref.watch(dailyDayDataProvider)[day]!;
+    Map<String, int> dayReport = ref.watch(dailyDayReportProvider)[day]!;
 
-    int incomeDaily = ref.watch(dailyIncomeProvider);
-    int expenseDaily = ref.watch(dailyExpenseProvider);
-    int summaryDaily = ref.watch(dailySummaryProvider);
+    int incomeDaily = dayReport['income']!;
+    int expenseDaily = dayReport['expense']!;
+    int summaryDaily = dayReport['summary']!;
     String summaryPrefix = summaryDaily > 0 ? 'income' : 'expense';
 
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: Column(
-        children: [
-          Text(
-            day,
-            style: titleStyle,
-          ),
-          Card(
-            elevation: 5,
-            child: Column(
-              children: [
-                ListTile(
-                    title: Text(
-                      'Summary  ${currencyFormat(summaryDaily.toString(), prefix: summaryPrefix)}',
-                    ),
-                    subtitle: Column(
-                      children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: [
-                            const Expanded(flex: 1, child: Text('Income')),
-                            Expanded(
-                                flex: 3,
-                                child: Text(
-                                    currencyFormat(incomeDaily.toString(), prefix: 'income')))
-                          ],
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: [
-                            const Expanded(flex: 1, child: Text('Expense')),
-                            Expanded(
-                                flex: 3,
-                                child: Text(currencyFormat(expenseDaily.toString(),
-                                    prefix: 'expense')))
-                          ],
-                        ),
-                      ],
-                    ))
-              ],
-            ),
-          ),
-          //LIST OF BUDGET
-          Expanded(
-            child: SingleChildScrollView(
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: List.generate(budgetHistory.length, (index) {
-                    BudgetHistoryData budget = budgetHistory[index];
-                    return Column(
-                      children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: [
-                            Expanded(
-                              flex: 3,
-                              child: Text(
-                                currencyFormat(budget.amount, prefix: budget.type),
-                                style: TextStyle(
-                                    color:
-                                        budget.type == 'income' ? Colors.green : Colors.red),
-                              ),
-                            ),
-                            Expanded(flex: 3, child: Text(budget.detail)),
-                            Expanded(
-                                flex: 1, child: Text(DateFormat('kk:mm').format(budget.date)))
-                          ],
-                        ),
-                        const Divider(
-                          thickness: 2,
-                        ),
-                      ],
-                    );
-                  }),
-                ),
+          children: [
+            Card(
+              elevation: 5,
+              child: Column(
+                children: [
+                  ListTile(
+                      title: Text(
+                        'Summary  ${currencyFormat(summaryDaily.toString(), prefix: summaryPrefix)}',
+                      ),
+                      subtitle: Column(
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: [
+                              const Expanded(flex: 1, child: Text('Income')),
+                              Expanded(
+                                  flex: 3,
+                                  child: Text(currencyFormat(incomeDaily.toString(),
+                                      prefix: 'income')))
+                            ],
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: [
+                              const Expanded(flex: 1, child: Text('Expense')),
+                              Expanded(
+                                  flex: 3,
+                                  child: Text(currencyFormat(expenseDaily.toString(),
+                                      prefix: 'expense')))
+                            ],
+                          ),
+                        ],
+                      ))
+                ],
               ),
             ),
-          ),
-        ],
-      ),
+            //LIST OF BUDGET
+            Container(
+              constraints: const BoxConstraints(maxHeight: 200),
+                child: SingleChildScrollView(
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: List.generate(budgetHistory.length, (index) {
+                        BudgetHistoryData budget = budgetHistory[index];
+                        return Column(
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              children: [
+                                Expanded(
+                                  flex: 3,
+                                  child: Text(
+                                    currencyFormat(budget.amount, prefix: budget.type),
+                                    style: TextStyle(
+                                        color:
+                                            budget.type == 'income' ? Colors.green : Colors.red),
+                                  ),
+                                ),
+                                Expanded(flex: 3, child: Text(budget.detail)),
+                                Expanded(
+                                    flex: 1,
+                                    child: Text(DateFormat('kk:mm').format(budget.date)))
+                              ],
+                            ),
+                          ],
+                        );
+                      }),
+                    ),
+                  ),
+                ),
+            ),
+          ],
+        ),
     );
   }
 }
@@ -168,9 +163,7 @@ class TextEmbeddedBox extends ConsumerWidget {
         Container(
           margin: const EdgeInsets.fromLTRB(9, 1, 9, 1),
           padding: const EdgeInsets.all(9),
-          decoration: BoxDecoration(
-            border: Border.all(color: Theme.of(context).primaryColor)
-          ),
+          decoration: BoxDecoration(border: Border.all(color: Theme.of(context).primaryColor)),
           child: Text(
             currencyFormat(thisMonthSummary.toString(), prefix: prefix),
             style: TextStyle(color: summaryTextColor),
@@ -178,7 +171,9 @@ class TextEmbeddedBox extends ConsumerWidget {
         ),
         const Padding(
           padding: EdgeInsets.fromLTRB(9, 1, 9, 1),
-          child: Divider(thickness: 2,),
+          child: Divider(
+            thickness: 2,
+          ),
         )
       ],
     );
@@ -188,16 +183,13 @@ class TextEmbeddedBox extends ConsumerWidget {
 //DISPLAYER
 //SHOW THE DAILY ANALYTICS
 class AnalyticsDailyPage extends ConsumerWidget {
-  const AnalyticsDailyPage({Key? key}) : super(key: key);
+  const AnalyticsDailyPage({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     var dailyDayData = ref.watch(dailyDayDataProvider);
     //list of days user had been inputed some cash
     List<String> dayDates = dailyDayData.keys.toList();
-
-    //expose day which user selected,
-    var dayInfoDay = ref.watch(dayInfoDayProvider);
 
     return Column(
       children: [
@@ -211,16 +203,12 @@ class AnalyticsDailyPage extends ConsumerWidget {
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: List.generate(dayDates.length, (index) {
-                      Widget button = ElevatedButton(
-                        onPressed: () {
-                          ref
-                              .read(dayInfoDayProvider.notifier)
-                              .update((state) => dayDates[index]);
-                        },
-                        //Show days text
-                        child: Text(dayDates[index]),
+                      //Each day expansion tile
+                      return ExpansionTile(
+                        maintainState: true,
+                        title: Text(dayDates[index]),
+                        children: [DayInfoDisplay(day: dayDates[index])],
                       );
-                      return button;
                     }),
                   ),
                 ],
@@ -228,13 +216,6 @@ class AnalyticsDailyPage extends ConsumerWidget {
             ),
           ),
         ),
-        const Divider(
-          thickness: 2,
-        ),
-        //show the day budget info
-        Expanded(
-          child: dayInfoDay != '' ? const DayInfoDisplay() : const Column(),
-        )
       ],
     );
   }
