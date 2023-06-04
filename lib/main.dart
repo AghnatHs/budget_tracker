@@ -1,13 +1,28 @@
+import 'package:fl_budget_tracker/providers/app_settings_providers.dart';
+import 'package:fl_budget_tracker/providers/date_format_providers.dart';
 import 'package:fl_budget_tracker/screens/template_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-const bool debugEnableDeviceSimulator = true;
+import 'providers/theme_providers.dart';
 
-void main() {
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  final appSettingsPrefsInit = await SharedPreferences.getInstance();
+  //SET TO DEFAULT VALUE WHEN FIRST TIME
+  appSettingsPrefsInit.getString(ThemeFromSetting) == null
+      ? appSettingsPrefsInit.setString(ThemeFromSetting, 'Green')
+      : () {};
+  appSettingsPrefsInit.getString(DateFormatFromSetting) == null
+      ? appSettingsPrefsInit.setString(
+          DateFormatFromSetting, DateFormatSetting.dayDayMonthYearHourMinute.name)
+      : () {};
   runApp(
-    const ProviderScope(
-      child: App(),
+    ProviderScope(
+      overrides: [appSettingsProvider.overrideWithValue(appSettingsPrefsInit)],
+      child: const App(),
     ),
   );
 }
@@ -17,13 +32,14 @@ class App extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    Color themeColor = ref.watch(themeProvider);
     return MaterialApp(
       title: 'Track Me Budget',
       theme: ThemeData(
-        primaryColor: Colors.green,
+        primaryColor: themeColor,
         colorScheme: ColorScheme.fromSwatch(
           brightness: Brightness.light,
-          primarySwatch: Colors.green,
+          primarySwatch: themeColor as MaterialColor,
         ),
       ),
       home: const TemplateScreen(),
