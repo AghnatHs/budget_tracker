@@ -6,11 +6,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 const String ThemeFromSetting = 'setting_theme';
 const String DateFormatFromSetting = 'setting_date_format';
+const String AppInfoFromSetting = 'app_info';
 
 final appSettingsProvider = Provider<SharedPreferences>((ref) {
   throw UnimplementedError();
 });
-
 
 final appSettingsThemeProvider = StateProvider<String>((ref) {
   final appSettings = ref.watch(appSettingsProvider);

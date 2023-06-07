@@ -3,6 +3,7 @@ import 'package:fl_budget_tracker/providers/date_format_providers.dart';
 import 'package:fl_budget_tracker/screens/template_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'providers/theme_providers.dart';
@@ -10,8 +11,9 @@ import 'providers/theme_providers.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
+  PackageInfo packageInfo = await PackageInfo.fromPlatform();
+
   final appSettingsPrefsInit = await SharedPreferences.getInstance();
-  //SET TO DEFAULT VALUE WHEN FIRST TIME
   appSettingsPrefsInit.getString(ThemeFromSetting) == null
       ? appSettingsPrefsInit.setString(ThemeFromSetting, 'Green')
       : () {};
@@ -19,6 +21,8 @@ Future<void> main() async {
       ? appSettingsPrefsInit.setString(
           DateFormatFromSetting, DateFormatSetting.dayDayMonthYearHourMinute.name)
       : () {};
+  appSettingsPrefsInit.setStringList(
+      AppInfoFromSetting, [packageInfo.appName, packageInfo.version]);
   runApp(
     ProviderScope(
       overrides: [appSettingsProvider.overrideWithValue(appSettingsPrefsInit)],
