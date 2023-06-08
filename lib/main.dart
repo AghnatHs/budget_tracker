@@ -38,7 +38,7 @@ class App extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     Color themeColor = ref.watch(themeProvider);
     return MaterialApp(
-      title: 'Track Me Budget',
+      title: 'Budget Tracker',
       theme: ThemeData(
         primaryColor: themeColor,
         colorScheme: ColorScheme.fromSwatch(

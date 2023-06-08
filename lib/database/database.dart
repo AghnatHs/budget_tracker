@@ -21,6 +21,7 @@ Future<File> _filePath({required String filename}) async {
   File dbFile = File('$path$filename');
   if (!dbFile.existsSync()) {
     dbFile = await File('$path$filename').create(recursive: true);
+    dbFile.writeAsString(jsonEncode({}));
     return dbFile;
   }
   return dbFile;
@@ -30,8 +31,20 @@ Future<File> _filePath({required String filename}) async {
 //Get budget Database
 fetchDbJson() async {
   final dbFile = await _filePath(filename: dbFilename);
-  final db = await jsonDecode(await dbFile.readAsString());
-  return db;
+  try {
+    final db = await jsonDecode(await dbFile.readAsString());
+    return db;
+  } catch (e) {
+    //print(e);
+  }
+  /*
+  if (dbFile.existsSync()) {
+    final db = await jsonDecode(await dbFile.readAsString());
+    return db;
+  } else {
+    return {};
+  }
+  */
 }
 
 //Save budget Database

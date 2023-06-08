@@ -11,6 +11,7 @@ import '../functions.dart';
 import '../providers/database_providers.dart';
 
 import 'input_dialog_widgets.dart';
+import 'snackbar.dart';
 
 //TEXT STYLE
 const TextStyle normalBudgetTextStyle = TextStyle(
@@ -85,17 +86,35 @@ class BudgetHistoryListTile extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     Color textColor = budgetType == 'income' ? Colors.green : Colors.red;
     return ListTile(
+      onTap: (){
+        ScaffoldMessenger.of(context).hideCurrentSnackBar();
+        ScaffoldMessenger.of(context).showSnackBar(createSnackbar('Long press to delete'));
+      },
+      onLongPress: () {
+            showDialog(
+              barrierColor: Colors.black87,
+              context: context,
+              builder: (BuildContext context) => BudgetTileConfirmDeleteDialog(
+                  token: token,
+                  amount: budget,
+                  budgetType: budgetType,
+                  detail: detail,
+                  date: date),
+            );
+          },
+      visualDensity: const VisualDensity(vertical: -4),
       title: Text(
         currencyFormat(budget, prefix: budgetType),
         style: TextStyle(color: textColor),
       ),
       subtitle: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        Text(detail),
+        detail != "" ? Text(detail): Container(),
         Text(
           date,
           style: const TextStyle(fontStyle: FontStyle.italic),
         )
       ]),
+      /*
       trailing: IconButton(
           icon: const Icon(Icons.delete_forever),
           onPressed: () {
@@ -110,6 +129,7 @@ class BudgetHistoryListTile extends ConsumerWidget {
                   date: date),
             );
           }),
+        */
       isThreeLine: false,
     );
   }

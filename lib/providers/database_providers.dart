@@ -85,16 +85,20 @@ class BudgetHistoryDataNotifier extends StateNotifier<List<BudgetHistoryData>> {
 
   void fetchFromJson() async {
     // {"_token":[_amount, _type, _detail, DateTime _date]}
-    final Map db = await fetchDbJson();
-    state = [
-      for (final token in db.keys)
-        BudgetHistoryData(
-            token: token,
-            amount: db[token][0],
-            type: db[token][1],
-            detail: db[token][2],
-            date: DateTime.parse(db[token][3]))
-    ];
+    try {
+      final Map db = await fetchDbJson();
+      state = [
+        for (final token in db.keys)
+          BudgetHistoryData(
+              token: token,
+              amount: db[token][0],
+              type: db[token][1],
+              detail: db[token][2],
+              date: DateTime.parse(db[token][3]))
+      ];
+    } catch (e) {
+      //print(e);
+    }
   }
 
   void addBudget(BudgetHistoryData budget) {

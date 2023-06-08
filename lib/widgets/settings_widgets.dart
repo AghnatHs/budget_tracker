@@ -142,7 +142,7 @@ class SettingDisplay extends ConsumerWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
               Text(appInfo[0]), //APP NAME
-              Text('version RC1 ${appInfo[1]}') //APP VERSION
+              Text('version ${appInfo[1]}') //APP VERSION
             ]),
           )
         ],

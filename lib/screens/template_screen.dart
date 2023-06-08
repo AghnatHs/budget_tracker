@@ -16,19 +16,13 @@ class TemplateScreen extends ConsumerWidget {
     return Scaffold(
         body: screenCurrently,
         bottomNavigationBar: const BottomNavigator(),
-        floatingActionButton: screenIndex == 0 ? FloatingActionButton.extended(
-            icon: const Icon(
-              Icons.attach_money,
-              color: Colors.white,
-            ),
-            label: const Text(
-              'Input',
-              style: TextStyle(color: Colors.white),
-            ),
-            onPressed: () => showDialog(
-                barrierColor: Colors.black87,
-                context: context,
-                builder: (BuildContext context) => const InputDialog())) : null);
+        floatingActionButton: screenIndex == 0 ?  FloatingActionButton(
+              child: const Icon(Icons.add),
+              onPressed: () => showDialog(
+                  barrierColor: Colors.black87,
+                  context: context,
+                  builder: (BuildContext context) => const InputDialog()))
+        : null);
   }
 }
 /*

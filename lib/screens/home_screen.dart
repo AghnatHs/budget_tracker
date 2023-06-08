@@ -11,7 +11,7 @@ class HomeScreen extends ConsumerWidget {
       children: <Widget>[
         HomeTop(),
         HomeMiddle(),
-        Divider(thickness: 1,),
+        Divider(thickness: 1.5,),
         HomeBottom(),
       ],
     );
@@ -64,7 +64,7 @@ class HomeBottom extends ConsumerWidget {
       child: 
       Container(
           decoration: const BoxDecoration(
-            color: Colors.white,
+            //color: Colors.white,
             borderRadius: BorderRadius.only(topLeft: Radius.circular(9), topRight: Radius.circular(9))
           ),
         child: const BudgetHistoryDisplay(),
