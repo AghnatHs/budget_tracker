@@ -21,8 +21,13 @@ Future<void> main() async {
       ? appSettingsPrefsInit.setString(
           DateFormatFromSetting, DateFormatSetting.dayDayMonthYearHourMinute.name)
       : () {};
+  appSettingsPrefsInit.getBool(AcknowledgeBudgetDeleteOnLongPress) == null
+      ? appSettingsPrefsInit.setBool(
+        AcknowledgeBudgetDeleteOnLongPress, false) 
+      : () {};
   appSettingsPrefsInit.setStringList(
       AppInfoFromSetting, [packageInfo.appName, packageInfo.version]);
+      
   runApp(
     ProviderScope(
       overrides: [appSettingsProvider.overrideWithValue(appSettingsPrefsInit)],

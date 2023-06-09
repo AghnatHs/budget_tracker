@@ -13,6 +13,8 @@ Color getTheme(String name) {
       return Colors.indigo;
     case 'Blue':
       return Colors.blue;
+    case 'Blue Grey':
+      return Colors.blueGrey;
   }
 
   return Colors.green;

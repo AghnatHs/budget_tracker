@@ -85,6 +85,10 @@ class SettingDisplay extends ConsumerWidget {
                   groupValue: themeSetting,
                 ),
                 ThemeSelectorRadioButton(
+                  value: 'Blue Grey',
+                  groupValue: themeSetting,
+                ),
+                ThemeSelectorRadioButton(
                   value: 'Green',
                   groupValue: themeSetting,
                 ),

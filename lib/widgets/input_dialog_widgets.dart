@@ -35,7 +35,7 @@ class InputDialogState extends ConsumerState<InputDialog> {
       titlePadding: const EdgeInsets.fromLTRB(9, 9, 0, 0),
       contentPadding: const EdgeInsets.all(2),
       content: Padding(
-        padding: const EdgeInsets.fromLTRB(9, 0, 0, 5),
+        padding: const EdgeInsets.fromLTRB(9, 2, 9, 5),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisSize: MainAxisSize.min,
@@ -163,9 +163,10 @@ class BudgetTileConfirmDeleteDialog extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return AlertDialog(
+      buttonPadding: EdgeInsets.fromLTRB(0, 0, 5, 5),
       title: const Text('Delete this budget?', style: inputTitleTextStyle),
       titlePadding: const EdgeInsets.fromLTRB(12, 12, 0, 12),
-      contentPadding: const EdgeInsets.all(2),
+      contentPadding: EdgeInsets.zero,
       content: Padding(
           padding: const EdgeInsets.fromLTRB(12, 5, 12, 0),
           child: Column(
@@ -178,23 +179,19 @@ class BudgetTileConfirmDeleteDialog extends ConsumerWidget {
                   height: 8,
                 ),
                 const Text('This action cannot be undone!'),
-                const Divider(),
               ])),
+              
       actions: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.end,
-          children: [
-            TextButton(onPressed: () => Navigator.pop(context), child: const Text('CANCEL')),
-            TextButton(
-                onPressed: () {
-                  ref.read(budgetHistoryDataProvider.notifier).removeBudget(token);
-                  saveDbJson(data: ref.watch(budgetHistoryDataProvider));
-                  Navigator.pop(context);
-                  ScaffoldMessenger.of(context).showSnackBar(createSnackbar('Budget deleted'));
-                },
-                child: const Text('ACCEPT'))
-          ],
-        )
+        TextButton(onPressed: () => Navigator.pop(context), child: const Text('CANCEL')),
+        TextButton(
+            onPressed: () {
+              ref.read(budgetHistoryDataProvider.notifier).removeBudget(token);
+              saveDbJson(data: ref.watch(budgetHistoryDataProvider));
+              Navigator.pop(context);
+              ScaffoldMessenger.of(context).removeCurrentSnackBar();
+              ScaffoldMessenger.of(context).showSnackBar(createSnackbar('Budget deleted'));
+            },
+            child: const Text('ACCEPT', style: TextStyle(color: Colors.red),))
       ],
     );
   }

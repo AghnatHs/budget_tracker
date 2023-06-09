@@ -1,5 +1,6 @@
 // ignore_for_file: no_leading_underscores_for_local_identifiers
 
+import 'package:fl_budget_tracker/providers/app_settings_providers.dart';
 import 'package:fl_budget_tracker/providers/date_format_providers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -48,7 +49,7 @@ class BudgetInfoCard extends ConsumerWidget {
     return Card(
       elevation: 4,
       child: Padding(
-        padding: const EdgeInsets.all(5),
+        padding: const EdgeInsets.fromLTRB(5, 5, 5, 8),
         child: Column(children: [
           Text(
             header,
@@ -84,31 +85,44 @@ class BudgetHistoryListTile extends ConsumerWidget {
       : super(key: key);
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    bool isAcknowledgeBudgetDeleteOnLongPress =
+        ref.watch(appSettingsAcknowledgeBudgetDeleteOnLongPress);
     Color textColor = budgetType == 'income' ? Colors.green : Colors.red;
     return ListTile(
-      onTap: (){
-        ScaffoldMessenger.of(context).hideCurrentSnackBar();
-        ScaffoldMessenger.of(context).showSnackBar(createSnackbar('Long press to delete'));
+      //TODO: i know
+      onTap: () {
+        if (!isAcknowledgeBudgetDeleteOnLongPress) {
+          ScaffoldMessenger.of(context).hideCurrentSnackBar();
+          ScaffoldMessenger.of(context).showSnackBar(createSnackbar('Long press to delete',
+              duration: 3,
+              actions: SnackBarAction(
+                  label: 'DONT SHOW AGAIN',
+                  onPressed: () =>
+                    ref.read(appSettingsAcknowledgeBudgetDeleteOnLongPress.notifier).state = !isAcknowledgeBudgetDeleteOnLongPress
+              )
+            )
+          );
+        } else{}
       },
       onLongPress: () {
-            showDialog(
-              barrierColor: Colors.black87,
-              context: context,
-              builder: (BuildContext context) => BudgetTileConfirmDeleteDialog(
-                  token: token,
-                  amount: budget,
-                  budgetType: budgetType,
-                  detail: detail,
-                  date: date),
-            );
-          },
+        showDialog(
+          barrierColor: Colors.black87,
+          context: context,
+          builder: (BuildContext context) => BudgetTileConfirmDeleteDialog(
+              token: token,
+              amount: budget,
+              budgetType: budgetType,
+              detail: detail,
+              date: date),
+        );
+      },
       visualDensity: const VisualDensity(vertical: -4),
       title: Text(
         currencyFormat(budget, prefix: budgetType),
         style: TextStyle(color: textColor),
       ),
       subtitle: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        detail != "" ? Text(detail): Container(),
+        detail != "" ? Text(detail) : Container(),
         Text(
           date,
           style: const TextStyle(fontStyle: FontStyle.italic),
@@ -150,7 +164,7 @@ class TotalBudgetDisplay extends ConsumerWidget {
           child: BudgetInfoCard(
             header: 'Total Budget',
             content: currencyFormat(totalBudget.toString(), prefix: prefix),
-            contentStyle: totalBudgetTextStyle,
+            contentStyle: totalBudgetTextStyle.copyWith(color: prefix == 'income' ? Colors.green : Colors.red),
           ),
         ),
       ),

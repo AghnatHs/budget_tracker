@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 
-SnackBar createSnackbar(String messages) {
+SnackBar createSnackbar(String messages, {int? duration, SnackBarAction? actions}) {
   return SnackBar(
-    content: Row(children: [Text(messages)],),
-    duration: const Duration(seconds: 1),
+    actionOverflowThreshold: 1,
+    behavior: SnackBarBehavior.floating,
+    content: Text(messages),
+    duration: Duration(seconds: duration ?? 1),
+    action: actions,
   );
 }
