@@ -163,7 +163,7 @@ class BudgetTileConfirmDeleteDialog extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return AlertDialog(
-      buttonPadding: EdgeInsets.fromLTRB(0, 0, 5, 5),
+      buttonPadding: const EdgeInsets.fromLTRB(0, 0, 5, 5),
       title: const Text('Delete this budget?', style: inputTitleTextStyle),
       titlePadding: const EdgeInsets.fromLTRB(12, 12, 0, 12),
       contentPadding: EdgeInsets.zero,

@@ -89,7 +89,6 @@ class BudgetHistoryListTile extends ConsumerWidget {
         ref.watch(appSettingsAcknowledgeBudgetDeleteOnLongPress);
     Color textColor = budgetType == 'income' ? Colors.green : Colors.red;
     return ListTile(
-      //TODO: i know
       onTap: () {
         if (!isAcknowledgeBudgetDeleteOnLongPress) {
           ScaffoldMessenger.of(context).hideCurrentSnackBar();
