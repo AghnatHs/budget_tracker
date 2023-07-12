@@ -2,6 +2,7 @@
 A simple app to keep track of your finances | Flutter <br>
 State management using [Riverpod](https://riverpod.dev/) <br>
 Store app settings using [SharedPreferences](https://pub.dev/packages/shared_preferences) <br>
+Database using JSON (Store locally) <br>
 
 ## Screenshot
 <table>
