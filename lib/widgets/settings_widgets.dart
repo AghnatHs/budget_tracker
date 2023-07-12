@@ -1,4 +1,7 @@
+import 'package:fl_budget_tracker/database/backup_database.dart';
+import 'package:fl_budget_tracker/database/database.dart';
 import 'package:fl_budget_tracker/providers/app_settings_providers.dart';
+import 'package:fl_budget_tracker/providers/database_providers.dart';
 import 'package:fl_budget_tracker/providers/date_format_providers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -136,15 +139,55 @@ class SettingDisplay extends ConsumerWidget {
               ])
             ],
           ),
+          ExpansionTile(
+              leading: const SizedBox(
+                  height: double.infinity, child: Icon(Icons.settings_backup_restore)),
+              title: const Text(
+                "Backup",
+                style: SettingTitleTextStyle,
+              ),
+              subtitle: const Text("Export and import backup"),
+              children: [
+                ListTile(
+                  leading: const SizedBox(
+                    height: double.infinity,
+                    child: Icon(Icons.file_upload),
+                  ),
+                  title: const Text(
+                    'Export',
+                    style: SettingTitleTextStyle,
+                  ),
+                  onTap: () {
+                    exportBackupDb();
+                    ScaffoldMessenger.of(context).removeCurrentSnackBar();
+                    ScaffoldMessenger.of(context).showSnackBar(createSnackbar('Backup Stored'));
+                  },
+                ),
+                ListTile(
+                  leading: const SizedBox(
+                    height: double.infinity,
+                    child: Icon(Icons.download),
+                  ),
+                  title: const Text(
+                    'Import',
+                    style: SettingTitleTextStyle,
+                  ),
+                  onTap: () {
+                    ref.read(budgetHistoryDataProvider.notifier).importFromExternal();
+                    Future.delayed(const Duration(milliseconds: 500),
+                        () => saveDbJson(data: ref.watch(budgetHistoryDataProvider)));
+                    ScaffoldMessenger.of(context).removeCurrentSnackBar();
+                    ScaffoldMessenger.of(context).showSnackBar(createSnackbar('Backup Restored'));
+                  },
+                ),
+              ]),
           ListTile(
             leading: const SizedBox(height: double.infinity, child: Icon(Icons.info_outline)),
             title: const Text(
               'About',
               style: SettingTitleTextStyle,
             ),
-            subtitle: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
+            subtitle: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
               Text(appInfo[0]), //APP NAME
               Text('version ${appInfo[1]}') //APP VERSION
             ]),

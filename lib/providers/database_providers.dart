@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:fl_budget_tracker/database/backup_database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -83,19 +84,32 @@ class BudgetHistoryData {
 class BudgetHistoryDataNotifier extends StateNotifier<List<BudgetHistoryData>> {
   BudgetHistoryDataNotifier() : super([]);
 
+  void overwriteState(Map db) {
+    state = [
+      for (final token in db.keys)
+        BudgetHistoryData(
+            token: token,
+            amount: db[token][0],
+            type: db[token][1],
+            detail: db[token][2],
+            date: DateTime.parse(db[token][3]))
+    ];
+  }
+
   void fetchFromJson() async {
     // {"_token":[_amount, _type, _detail, DateTime _date]}
     try {
-      final Map db = await fetchDbJson();
-      state = [
-        for (final token in db.keys)
-          BudgetHistoryData(
-              token: token,
-              amount: db[token][0],
-              type: db[token][1],
-              detail: db[token][2],
-              date: DateTime.parse(db[token][3]))
-      ];
+      final Map db = await fetchDb();
+      overwriteState(db);
+    } catch (e) {
+      //print(e);
+    }
+  }
+
+  void importFromExternal() async {
+    try {
+      final Map db = await getBackupDb();
+      overwriteState(db);
     } catch (e) {
       //print(e);
     }

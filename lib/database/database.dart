@@ -29,22 +29,14 @@ Future<File> _filePath({required String filename}) async {
 
 //BUDGET DATABASE
 //Get budget Database
-fetchDbJson() async {
-  final dbFile = await _filePath(filename: dbFilename);
+fetchDb({String filename = dbFilename}) async {
+  final dbFile = await _filePath(filename: filename);
   try {
     final db = await jsonDecode(await dbFile.readAsString());
     return db;
   } catch (e) {
     //print(e);
   }
-  /*
-  if (dbFile.existsSync()) {
-    final db = await jsonDecode(await dbFile.readAsString());
-    return db;
-  } else {
-    return {};
-  }
-  */
 }
 
 //Save budget Database
@@ -62,5 +54,6 @@ saveDbJson({required List<BudgetHistoryData> data}) async {
   }
 
   final jsonEncodedConvertedData = jsonEncode(convertedData);
+  print('save');
   return await dbFile.writeAsString(jsonEncodedConvertedData);
 }
