@@ -54,6 +54,5 @@ saveDbJson({required List<BudgetHistoryData> data}) async {
   }
 
   final jsonEncodedConvertedData = jsonEncode(convertedData);
-  print('save');
   return await dbFile.writeAsString(jsonEncodedConvertedData);
 }

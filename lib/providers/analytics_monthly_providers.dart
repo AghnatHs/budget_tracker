@@ -79,6 +79,7 @@ final monthlyWidgetsDataProvider =
   return monthlyWidgetsDataProvider;
 });
 
+//Return map contains month as key and summary (income - expenses) as value
 final monthlySummaryProvider =
     StateNotifierProvider.autoDispose<MonthlySummaryNotifier, Map<String, int>>((ref) {
   final monthlyMonthData = ref.watch(monthlyMonthDataProvider);
@@ -102,26 +103,88 @@ final monthlySummaryProvider =
   return monthlySummary;
 });
 
+//Return map contains month as key and income per month as value
+final monthlySummaryOnlyIncomeProvider =
+    StateNotifierProvider.autoDispose<MonthlySummaryOnlyIncomeNotifier, Map<String, int>>(
+        (ref) {
+  final monthlyMonthData = ref.watch(monthlyMonthDataProvider);
+  final monthlySummaryOnlyIncome = MonthlySummaryOnlyIncomeNotifier();
+
+  final Map<String, int> data = {};
+
+  for (var month in monthlyMonthData.keys) {
+    int thisMonthIncome = 0;
+    for (var budget in monthlyMonthData[month]!) {
+      String type = budget.type;
+      int amount = int.parse(budget.amount);
+      type == 'income' ? thisMonthIncome += amount : (){};
+    }
+    data.update(month, (value) => thisMonthIncome, ifAbsent: () => thisMonthIncome);
+  }
+
+  monthlySummaryOnlyIncome.overwriteState(data);
+  return monthlySummaryOnlyIncome;
+});
+
+//Return map contains month as key and income per month as value
+final monthlySummaryOnlyExpenseProvider =
+    StateNotifierProvider.autoDispose<MonthlySummaryOnlyExpenseNotifier, Map<String, int>>(
+        (ref) {
+  final monthlyMonthData = ref.watch(monthlyMonthDataProvider);
+  final monthlySummaryOnlyExpense = MonthlySummaryOnlyExpenseNotifier();
+
+  final Map<String, int> data = {};
+
+  for (var month in monthlyMonthData.keys) {
+    int thisMonthExpense = 0;
+    for (var budget in monthlyMonthData[month]!) {
+      String type = budget.type;
+      int amount = int.parse(budget.amount);
+      type == 'expense' ? thisMonthExpense += amount : (){};
+    }
+    data.update(month, (value) => thisMonthExpense, ifAbsent: () => thisMonthExpense);
+  }
+
+  monthlySummaryOnlyExpense.overwriteState(data);
+  return monthlySummaryOnlyExpense;
+});
+
 class MonthlyWidgetsDataNotifier extends StateNotifier<List<Widget>> {
   MonthlyWidgetsDataNotifier() : super([]);
 
-  void overwriteState(List<Widget> newData) {
-    state = newData;
+  void overwriteState(List<Widget> newState) {
+    state = newState;
   }
 }
 
 class MonthlyMonthDataNotifier extends StateNotifier<Map<String, List<BudgetHistoryData>>> {
   MonthlyMonthDataNotifier() : super({});
 
-  void overwriteState(Map<String, List<BudgetHistoryData>> newData) {
-    state = newData;
+  void overwriteState(Map<String, List<BudgetHistoryData>> newState) {
+    state = newState;
   }
 }
 
 class MonthlySummaryNotifier extends StateNotifier<Map<String, int>> {
   MonthlySummaryNotifier() : super({});
 
-  void overwriteState(Map<String, int> newData) {
-    state = newData;
+  void overwriteState(Map<String, int> newState) {
+    state = newState;
+  }
+}
+
+class MonthlySummaryOnlyIncomeNotifier extends StateNotifier<Map<String, int>> {
+  MonthlySummaryOnlyIncomeNotifier() : super({});
+
+  void overwriteState(Map<String, int> newState) {
+    state = newState;
+  }
+}
+
+class MonthlySummaryOnlyExpenseNotifier extends StateNotifier<Map<String, int>> {
+  MonthlySummaryOnlyExpenseNotifier() : super({});
+
+  void overwriteState(Map<String, int> newState) {
+    state = newState;
   }
 }

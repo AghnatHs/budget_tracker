@@ -116,6 +116,8 @@ class TextEmbeddedBox extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     int thisMonthSummary = ref.watch(monthlySummaryProvider)[title]!;
+    int thisMonthSummaryOnlyIncome = ref.watch(monthlySummaryOnlyIncomeProvider)[title]!;
+    int thisMonthSummaryOnlyExpense = ref.watch(monthlySummaryOnlyExpenseProvider)[title]!;
 
     //Summary Text Properties
     String prefix = thisMonthSummary > 0 ? 'income' : 'expense';
@@ -138,7 +140,7 @@ class TextEmbeddedBox extends ConsumerWidget {
                   shape: BoxShape.rectangle,
                 ),
                 child: Scrollbar(
-                  thumbVisibility: true,
+                  thumbVisibility: false,
                   thickness: 2,
                   child: SingleChildScrollView(
                       child: Column(
@@ -165,9 +167,22 @@ class TextEmbeddedBox extends ConsumerWidget {
           margin: const EdgeInsets.fromLTRB(9, 1, 9, 1),
           padding: const EdgeInsets.all(9),
           decoration: BoxDecoration(border: Border.all(color: Theme.of(context).primaryColor)),
-          child: Text(
-            currencyFormat(thisMonthSummary.toString(), prefix: prefix),
-            style: TextStyle(color: summaryTextColor),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                "Income     : ${currencyFormat(thisMonthSummaryOnlyIncome.toString(), prefix: "income")}",
+                style: const TextStyle(color: Colors.green),
+              ),
+              Text(
+                "Expense   : ${currencyFormat(thisMonthSummaryOnlyExpense.toString(), prefix: "expense")}",
+                style: const TextStyle(color: Colors.red),
+              ),
+              Text(
+                "Summary : ${currencyFormat(thisMonthSummary.toString(), prefix: prefix)}",
+                style: TextStyle(color: summaryTextColor),
+              ),
+            ],
           ),
         ),
         const Padding(
@@ -229,15 +244,12 @@ class AnalyticsMonthlyPage extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     List<Widget> monthlyWidgets = ref.watch(monthlyWidgetsDataProvider);
 
-    return Scrollbar(
-      thumbVisibility: true,
-      child: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: monthlyWidgets,
-          ),
+    return SingleChildScrollView(
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: monthlyWidgets,
         ),
       ),
     );
