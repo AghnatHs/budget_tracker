@@ -39,3 +39,9 @@ String currencyFormat(String src, {required String prefix}) {
 
   return prefix + results.join() + afterComma;
 }
+
+String sentencedString(String src) {
+  List<String> srcSplit = src.split("");
+  srcSplit[0] = srcSplit[0].toUpperCase();
+  return srcSplit.join();
+}

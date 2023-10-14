@@ -140,7 +140,8 @@ class TextEmbeddedBox extends ConsumerWidget {
                   shape: BoxShape.rectangle,
                 ),
                 child: Scrollbar(
-                  thumbVisibility: false,
+                  controller: ScrollController(),
+                  thumbVisibility: true,
                   thickness: 2,
                   child: SingleChildScrollView(
                       child: Column(
@@ -185,12 +186,7 @@ class TextEmbeddedBox extends ConsumerWidget {
             ],
           ),
         ),
-        const Padding(
-          padding: EdgeInsets.fromLTRB(9, 1, 9, 1),
-          child: Divider(
-            thickness: 2,
-          ),
-        )
+        const SizedBox(height: 5,),
       ],
     );
   }
@@ -206,27 +202,50 @@ class AnalyticsDailyPage extends ConsumerWidget {
     var dailyDayData = ref.watch(dailyDayDataProvider);
     //list of days user had been inputed some cash
     List<String> dayDates = dailyDayData.keys.toList();
+    Set<String> months = {};
 
     return Column(
       children: [
         Expanded(
-          child: SingleChildScrollView(
-            child: Padding(
-              padding: const EdgeInsets.all(7.0),
-              child: Column(
-                children: [
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: List.generate(dayDates.length, (index) {
+          child: Scrollbar(
+            controller: ScrollController(),
+            thumbVisibility: true,
+            child: SingleChildScrollView(
+              child: Padding(
+                padding: const EdgeInsets.all(7.0),
+                child: Column(
+                  children: [
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      mainAxisAlignment: MainAxisAlignment.start,
                       //Each day expansion tile
-                      return ExpansionTile(
-                        title: Text(dayDates[index]),
-                        children: [DayInfoDisplay(day: dayDates[index])],
-                      );
-                    }),
-                  ),
-                ],
+                      children: List.generate(dayDates.length, (index) {
+                        String thisMonth = dayDates[index].split(" ")[2];
+                        Widget dayExpansionTile = Padding(
+                          padding: const EdgeInsets.all(2.0),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              months.contains(thisMonth)
+                                  ? const Stack()
+                                  : Text(
+                                      thisMonth,
+                                      style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+                                    ), //Month Text
+                              ExpansionTile(
+                                collapsedBackgroundColor: Colors.black12,
+                                title: Text(dayDates[index]),
+                                children: [DayInfoDisplay(day: dayDates[index])],
+                              ),
+                            ],
+                          ),
+                        );
+                        months.add(thisMonth);
+                        return dayExpansionTile;
+                      }),
+                    ),
+                  ],
+                ),
               ),
             ),
           ),
@@ -244,12 +263,16 @@ class AnalyticsMonthlyPage extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     List<Widget> monthlyWidgets = ref.watch(monthlyWidgetsDataProvider);
 
-    return SingleChildScrollView(
-      child: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: monthlyWidgets,
+    return Scrollbar(
+      controller: ScrollController(),
+      thumbVisibility: true,
+      child: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: monthlyWidgets,
+          ),
         ),
       ),
     );

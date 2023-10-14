@@ -143,7 +143,7 @@ class SettingDisplay extends ConsumerWidget {
               leading: const SizedBox(
                   height: double.infinity, child: Icon(Icons.settings_backup_restore)),
               title: const Text(
-                "Backup",
+                "Data",
                 style: SettingTitleTextStyle,
               ),
               subtitle: const Text("Export and import backup"),
@@ -188,6 +188,7 @@ class SettingDisplay extends ConsumerWidget {
               style: SettingTitleTextStyle,
             ),
             subtitle: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+              const Text("https://github.com/AghnatHs"),
               Text(appInfo[0]), //APP NAME
               Text('version ${appInfo[1]}') //APP VERSION
             ]),

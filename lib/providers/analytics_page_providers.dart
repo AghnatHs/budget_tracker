@@ -7,6 +7,7 @@ final analyticsPageProvider = StateNotifierProvider<AnalyticsPageNotifier, Map<S
   (ref) => AnalyticsPageNotifier()
 );
 
+
 class AnalyticsPageNotifier extends StateNotifier<Map<String, Widget>> {
   AnalyticsPageNotifier()
       : super({

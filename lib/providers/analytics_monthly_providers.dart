@@ -66,13 +66,22 @@ final monthlyWidgetsDataProvider =
       days.add(date);
     }
 
-    Widget monthlyTextEmbeddedBox = TextEmbeddedBox(
-      maxHeight: 250,
-      title: month,
-      children: monthlyTextEmbeddedBoxChildren.toList(),
+    Widget monthlyExpansionTile = Padding(
+      padding: const EdgeInsets.all(2.0),
+      child: ExpansionTile(
+        collapsedBackgroundColor: Colors.black12,
+        title: Text(month, style: const TextStyle(fontWeight: FontWeight.bold),),
+        children: [
+          TextEmbeddedBox(
+            maxHeight: 250,
+            title: month,
+            children: monthlyTextEmbeddedBoxChildren.toList(),
+          ),
+        ],
+      ),
     );
 
-    data.add(monthlyTextEmbeddedBox);
+    data.add(monthlyExpansionTile);
   }
 
   monthlyWidgetsDataProvider.overwriteState(data);
@@ -117,7 +126,7 @@ final monthlySummaryOnlyIncomeProvider =
     for (var budget in monthlyMonthData[month]!) {
       String type = budget.type;
       int amount = int.parse(budget.amount);
-      type == 'income' ? thisMonthIncome += amount : (){};
+      type == 'income' ? thisMonthIncome += amount : () {};
     }
     data.update(month, (value) => thisMonthIncome, ifAbsent: () => thisMonthIncome);
   }
@@ -140,7 +149,7 @@ final monthlySummaryOnlyExpenseProvider =
     for (var budget in monthlyMonthData[month]!) {
       String type = budget.type;
       int amount = int.parse(budget.amount);
-      type == 'expense' ? thisMonthExpense += amount : (){};
+      type == 'expense' ? thisMonthExpense += amount : () {};
     }
     data.update(month, (value) => thisMonthExpense, ifAbsent: () => thisMonthExpense);
   }
